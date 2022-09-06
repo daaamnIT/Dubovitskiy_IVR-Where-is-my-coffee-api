@@ -1,0 +1,6 @@
+Django==4.0.3
+jsonify==0.5
+Pillow==9.1.0
+Sphinx==4.5.0
+
+djangorestframework~=3.13.1
