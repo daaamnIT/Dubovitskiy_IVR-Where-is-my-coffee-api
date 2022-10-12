@@ -30,5 +30,6 @@ urlpatterns = [
 	path('login/', views.loginPage, name="login"),
 	path('logout/', views.logoutUser, name="logout"),
     path('', views.index),
+    path('setStatus/', views.setStatus, name="setOwnerStatus"),
     re_path(r'api/', include('main.urls')),
 ]

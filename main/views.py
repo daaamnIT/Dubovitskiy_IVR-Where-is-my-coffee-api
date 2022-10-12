@@ -8,6 +8,7 @@ from django.http import HttpResponse
 from .forms import AddForm
 from .forms import AddComment
 from .forms import Reports
+from .forms import OwnerAdd
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.generics import CreateAPIView
 from rest_framework.permissions import AllowAny
@@ -15,6 +16,7 @@ from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from rest_framework import status
 from rest_framework.views import APIView
+from rest_framework.decorators import api_view
 from .serializers import CreateUserSerializer
 from django.contrib.auth.models import User
 
@@ -148,6 +150,7 @@ class CreateUserAPIView(CreateAPIView):
         )
 
 
+
 class LogoutUserAPIView(APIView):
     queryset = get_user_model().objects.all()
 
@@ -171,4 +174,16 @@ class UserInfo(APIView):
         data = serialize("json", info, indent=2)
         return HttpResponse(data, content_type="application/json")
 
+@csrf_exempt
+def setStatus(request):
+    if request.method == 'POST':
+        f = AddComment(request.POST)
+        if f.is_valid():
+            username = f.data['username']
+            status = f.data['is_Owner']
+            item = Owners(username=username, is_Owner=status)
+            item.save()
+        else:
+            print(f.errors)
 
+    return HttpResponse(request)

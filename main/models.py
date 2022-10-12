@@ -11,7 +11,6 @@ class CoffeeShop(models.Model):
     image = models.ImageField(upload_to="coffee", null=True)
 
 
-
 class Comment(models.Model):
     author = models.CharField(max_length=255)
     text = models.CharField(max_length=255, default=None)
@@ -21,3 +20,8 @@ class Comment(models.Model):
 class Reports(models.Model):
     report = models.CharField(max_length=255, default=None)
     coffee_shop = models.ForeignKey(to=CoffeeShop, on_delete=models.CASCADE)
+
+
+class Owners(models.Model):
+    username = models.CharField(max_length=255)
+    is_Owner = models.CharField(max_length=255)

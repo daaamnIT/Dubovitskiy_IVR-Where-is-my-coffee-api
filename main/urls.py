@@ -20,5 +20,4 @@ urlpatterns = [
          UserInfo.as_view(),
          name='getUserInfo',
          ),
-
 ]
