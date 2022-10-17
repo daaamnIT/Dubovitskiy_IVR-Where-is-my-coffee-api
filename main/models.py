@@ -9,6 +9,8 @@ class CoffeeShop(models.Model):
     latitude = models.FloatField()
     longitude = models.FloatField()
     image = models.ImageField(upload_to="coffee", null=True)
+    rating = models.FloatField(default=0)
+    numRates = models.IntegerField(default=0)
 
 
 class Comment(models.Model):

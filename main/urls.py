@@ -1,6 +1,6 @@
 from django.urls import re_path, path
 from rest_framework.authtoken.views import obtain_auth_token
-from .views import CreateUserAPIView, LogoutUserAPIView, CommentsView, UserInfo, UserStatus
+from .views import CreateUserAPIView, LogoutUserAPIView, CommentsView, UserInfo, UserStatus, getRating
 
 urlpatterns = [
     re_path(r'^auth/login/$',
@@ -23,5 +23,9 @@ urlpatterns = [
     path('status/',
          UserStatus.as_view(),
          name='getUserStatus',
+         ),
+    path('rates/<pk>',
+         getRating.as_view(),
+         name='getRating',
          ),
 ]

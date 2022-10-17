@@ -196,3 +196,46 @@ class UserStatus(APIView):
         data = serialize("json", info, indent=2)
         print(data)
         return HttpResponse(data, content_type="application/json")
+
+
+@csrf_exempt
+def RatingSys(request):
+    if request.method == 'POST':
+        f = AddComment(request.POST)
+        if f.is_valid():
+            username = f.data['username']
+            status = f.data['is_Owner']
+            item = Owners(username=username, is_Owner=status)
+            item.save()
+        else:
+            print(f.errors)
+
+    return HttpResponse(request)
+
+
+class getRating(APIView):
+    def get(self, request, pk):
+        rates = CoffeeShop.objects.filter(id=pk)
+        data = serialize("json", rates, indent=2)
+        return HttpResponse(data, content_type="application/json")
+
+
+@csrf_exempt
+def setRating(request):
+    if request.method == 'POST':
+        f = AddComment(request.POST)
+        if f.is_valid():
+            pk = f.data['coffee_shop_id']
+            shop = list(CoffeeShop.objects.filter(id=pk).values())
+            number = shop[0]['numRates']
+            rating = shop[0]['rating']
+            total_rate = number * rating
+            new_total_rate = total_rate + int(f.data['rate'])
+            new_number = number + 1
+            new_total_rate /= new_number
+            CoffeeShop.objects.filter(id=pk).update(numRates=new_number)
+            CoffeeShop.objects.filter(id=pk).update(rating=new_total_rate)
+        else:
+            print(f.errors)
+
+    return HttpResponse(request)
