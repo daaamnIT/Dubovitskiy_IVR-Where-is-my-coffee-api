@@ -187,3 +187,12 @@ def setStatus(request):
             print(f.errors)
 
     return HttpResponse(request)
+
+
+class UserStatus(APIView):
+    def get(self, request):
+        name = request.user
+        info = Owners.objects.filter(username=name)
+        data = serialize("json", info, indent=2)
+        print(data)
+        return HttpResponse(data, content_type="application/json")
