@@ -33,4 +33,5 @@ urlpatterns = [
     path('setStatus/', views.setStatus, name="setOwnerStatus"),
     re_path(r'api/', include('main.urls')),
     path('setRating/', views.setRating, name='set_rating'),
+    path('rate_list/', views.rating_list, name='rating_list'),
 ]

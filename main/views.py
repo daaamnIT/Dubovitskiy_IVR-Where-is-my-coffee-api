@@ -239,3 +239,9 @@ def setRating(request):
             print(f.errors)
 
     return HttpResponse(request)
+
+
+def rating_list(request):
+    coffeelist = CoffeeShop.objects.order_by('-rating')
+    data = serialize("json", coffeelist, indent=2)
+    return HttpResponse(data, content_type="application/json")
