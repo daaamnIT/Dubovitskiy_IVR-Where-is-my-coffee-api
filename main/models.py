@@ -2,7 +2,7 @@ from django.contrib.auth.models import User
 from django.db import models
 
 
-# Create your models here.
+#Модель Кофейни
 class CoffeeShop(models.Model):
     name = models.CharField(max_length=255)
     description = models.CharField(max_length=255, default=None)
@@ -13,17 +13,20 @@ class CoffeeShop(models.Model):
     numRates = models.IntegerField(default=0)
 
 
+#Модель комментариев
 class Comment(models.Model):
     author = models.CharField(max_length=255)
     text = models.CharField(max_length=255, default=None)
     coffee_shop = models.ForeignKey(to=CoffeeShop, on_delete=models.CASCADE)
 
 
+#модель жалоб
 class Reports(models.Model):
     report = models.CharField(max_length=255, default=None)
     coffee_shop = models.ForeignKey(to=CoffeeShop, on_delete=models.CASCADE)
 
 
+#модель статуса пользователя
 class Owners(models.Model):
     username = models.CharField(max_length=255)
     is_Owner = models.CharField(max_length=255)

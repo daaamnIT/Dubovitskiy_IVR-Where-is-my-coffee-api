@@ -19,6 +19,8 @@ from main import views
 from django.urls import path, include
 from django.urls import re_path
 
+
+#пути
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('list/', views.coffee_list, name='coffee_list'),

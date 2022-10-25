@@ -2,6 +2,8 @@ from django.urls import re_path, path
 from rest_framework.authtoken.views import obtain_auth_token
 from .views import CreateUserAPIView, LogoutUserAPIView, CommentsView, UserInfo, UserStatus, getRating
 
+
+#ссылки использующие DRF Token для авторизации пользователя
 urlpatterns = [
     re_path(r'^auth/login/$',
             obtain_auth_token,
