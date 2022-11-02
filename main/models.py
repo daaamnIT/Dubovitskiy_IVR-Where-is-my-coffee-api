@@ -30,3 +30,8 @@ class Reports(models.Model):
 class Owners(models.Model):
     username = models.CharField(max_length=255)
     is_Owner = models.CharField(max_length=255)
+
+
+class Info(models.Model):
+    shop_id = models.IntegerField(default=0)
+    info = models.CharField(max_length=255, default=None)

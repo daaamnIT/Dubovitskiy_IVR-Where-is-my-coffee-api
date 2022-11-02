@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 
-from main.models import CoffeeShop, Comment, Reports, Owners
+from main.models import CoffeeShop, Comment, Reports, Owners, Info
 
 
 #Форма информации о кофейне
@@ -38,3 +38,9 @@ class OwnerAdd(forms.Form):
     class Meta:
         model = Owners
         fields = ['username', 'is_Owner']
+
+
+class InfoAdd(forms.Form):
+    class Meta:
+        model = Info
+        fields = ['shop_id', 'info']

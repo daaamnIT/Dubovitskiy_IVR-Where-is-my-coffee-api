@@ -9,6 +9,7 @@ from .forms import AddForm
 from .forms import AddComment
 from .forms import Reports
 from .forms import OwnerAdd
+from .forms import InfoAdd
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.generics import CreateAPIView
 from rest_framework.permissions import AllowAny
@@ -192,7 +193,7 @@ class UserInfo(APIView):
 @csrf_exempt
 def setStatus(request):
     if request.method == 'POST':
-        f = AddComment(request.POST)
+        f = OwnerAdd(request.POST)
         if f.is_valid():
             username = f.data['username']
             status = f.data['is_Owner']
@@ -264,4 +265,44 @@ def setRating(request):
 def rating_list(request):
     coffeelist = CoffeeShop.objects.order_by('-rating')
     data = serialize("json", coffeelist, indent=2)
+    return HttpResponse(data, content_type="application/json")      #возвращает json
+
+#
+# class AddInfo(APIView):
+#     def update(self, request):
+#         f = InfoAdd(request.POST)
+#         if f.is_valid():
+#             shop_id = f.data['shop_id']
+#             info = f.data['info']
+#             print(info)
+#             item = Info(shop_id=shop_id, info=info)
+#             item.save()
+#
+#         return HttpResponse(request)  # возвращает ответ (ок/не ок)
+
+
+
+
+@csrf_exempt
+def AddInfo(request):
+    if request.method == 'POST':
+        f = InfoAdd(request.POST)
+        if f.is_valid():
+            a = []
+            for i in range(len(request.POST)-1):
+                print(f.data['info_'+str(i)])
+                a.append(f.data['info_'+str(i)])
+            print(a)
+            for i in range(len(a)):
+                shop_id = f.data['shop_id']
+                info = a[i]
+                item = Info(shop_id=shop_id, info=info)
+                item.save()
+
+        return HttpResponse(request)  # возвращает ответ (ок/не ок)
+
+
+def info_list(request, pk):
+    infolist = Info.objects.filter(shop_id=pk)
+    data = serialize("json", infolist, indent=2)
     return HttpResponse(data, content_type="application/json")      #возвращает json
