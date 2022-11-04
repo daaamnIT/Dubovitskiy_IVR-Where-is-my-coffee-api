@@ -293,11 +293,29 @@ def AddInfo(request):
                 print(f.data['info_'+str(i)])
                 a.append(f.data['info_'+str(i)])
             print(a)
-            for i in range(len(a)):
-                shop_id = f.data['shop_id']
-                info = a[i]
-                item = Info(shop_id=shop_id, info=info)
-                item.save()
+            res = []
+            print(Info.objects.filter(shop_id=int(f.data['shop_id'])).count())
+            if Info.objects.filter(shop_id=int(f.data['shop_id'])).count() == 0:
+                for i in range(len(a)):
+                    shop_id = f.data['shop_id']
+                    info = a[i]
+                    item = Info(shop_id=shop_id, info=info)
+                    item.save()
+            else:
+                values = list(Info.objects.filter(shop_id=int(f.data['shop_id'])).values_list('info', flat=True))
+                print(values)
+                for i in range(len(a)):
+                    if a[i] not in values:
+                        res.append(a[i])
+            if len(res) == 0:
+                print('nothing')
+            else:
+                print('opa')
+                for i in range(len(res)):
+                    shop_id = f.data['shop_id']
+                    info = res[i]
+                    item = Info(shop_id=shop_id, info=info)
+                    item.save()
 
         return HttpResponse(request)  # возвращает ответ (ок/не ок)
 
