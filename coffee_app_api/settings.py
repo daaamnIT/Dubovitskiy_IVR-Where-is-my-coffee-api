@@ -66,7 +66,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'zkb_coffee_app_api.urls'
+ROOT_URLCONF = 'coffee_app_api.urls'
 
 TEMPLATES = [
     {

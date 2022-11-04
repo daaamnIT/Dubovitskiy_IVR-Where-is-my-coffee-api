@@ -19,6 +19,8 @@ from main import views
 from django.urls import path, include
 from django.urls import re_path
 
+
+#пути
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('list/', views.coffee_list, name='coffee_list'),
@@ -30,5 +32,8 @@ urlpatterns = [
 	path('login/', views.loginPage, name="login"),
 	path('logout/', views.logoutUser, name="logout"),
     path('', views.index),
+    path('setStatus/', views.setStatus, name="setOwnerStatus"),
     re_path(r'api/', include('main.urls')),
+    path('setRating/', views.setRating, name='set_rating'),
+    path('rate_list/', views.rating_list, name='rating_list'),
 ]

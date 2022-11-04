@@ -8,6 +8,7 @@ from django.http import HttpResponse
 from .forms import AddForm
 from .forms import AddComment
 from .forms import Reports
+from .forms import OwnerAdd
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.generics import CreateAPIView
 from rest_framework.permissions import AllowAny
@@ -15,10 +16,12 @@ from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from rest_framework import status
 from rest_framework.views import APIView
+from rest_framework.decorators import api_view
 from .serializers import CreateUserSerializer
 from django.contrib.auth.models import User
 
 
+#вью функция страницы входа (не используется)
 def loginPage(request):
     if request.user.is_authenticated:
         return redirect('home')
@@ -39,11 +42,13 @@ def loginPage(request):
         return render(request, 'login.html', context)
 
 
+#вью ф-ия выхода из профиля (не используется)
 def logoutUser(request):
     logout(request)
     return redirect('login')
 
 
+#вью ф-ия страницы регистрации (не используется)
 def registerPage(request):
     if request.user.is_authenticated:
         return redirect('home')
@@ -62,16 +67,19 @@ def registerPage(request):
         return render(request, 'register.html', context)
 
 
+#вью ф-ия получения списка кофеен
 def coffee_list(request):
     coffeelist = CoffeeShop.objects.all()
     data = serialize("json", coffeelist, indent=2)
-    return HttpResponse(data, content_type="application/json")
+    return HttpResponse(data, content_type="application/json")      #возвращает json
 
 
+#вью ф-ия главной страницы
 def index(request):
-    return render(request, 'index.html')
+    return render(request, 'index.html')      #возвращает страницу
 
 
+#вью-фия добавления кофейни в бд
 @csrf_exempt
 def adding(request):
     if request.method == 'POST':
@@ -87,9 +95,10 @@ def adding(request):
 
             coffee_list(request)
 
-    return HttpResponse(request)
+    return HttpResponse(request)      #возвращает ответ (ок/не ок)
 
 
+#вью ф-ия добавления комментов в бд
 @csrf_exempt
 def comment(request):
     if request.method == 'POST':
@@ -104,15 +113,17 @@ def comment(request):
         else:
             print(f.errors)
 
-    return HttpResponse(request)
+    return HttpResponse(request)      #возвращает ответ(ок/не ок)
 
 
+#вью ф-ия получения списка комментов
 def get_comments(request, pk):
     comments = Comment.objects.filter(coffee_shop=pk)
     data = serialize("json", comments, indent=2)
-    return HttpResponse(data, content_type="application/json")
+    return HttpResponse(data, content_type="application/json")      #возвращает json
 
 
+#ф-ия добавления репортов в бд
 @csrf_exempt
 def reportSystem(request):
     if request.method == 'POST':
@@ -126,9 +137,10 @@ def reportSystem(request):
         else:
             print(f.errors)
 
-    return HttpResponse(request)
+    return HttpResponse(request)      #возвращает ответ (ок/не ок)
 
 
+#класс создания юзера с использованием Django Rest Framework
 class CreateUserAPIView(CreateAPIView):
     serializer_class = CreateUserSerializer
     permission_classes = [AllowAny]
@@ -141,34 +153,115 @@ class CreateUserAPIView(CreateAPIView):
         # We create a token than will be used for future auth
         token = Token.objects.create(user=serializer.instance)
         token_data = {"token": token.key}
-        return Response(
+        return Response(                              #возвращает токен пользователя и ответ
             {**serializer.data, **token_data},
             status=status.HTTP_201_CREATED,
             headers=headers
         )
 
 
+
+#класс выхода пользователя из аккаунта (DRF)
 class LogoutUserAPIView(APIView):
     queryset = get_user_model().objects.all()
 
     def get(self, request, format=None):
         # simply delete the token to force a login
         request.user.auth_token.delete()
-        return Response(status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_200_OK)        #возвращает ответ
 
 
+#класс получения комментов
 class CommentsView(APIView):
     def get(self, request, pk):
         comments = Comment.objects.filter(coffee_shop=pk)
         data = serialize("json", comments, indent=2)
-        return HttpResponse(data, content_type="application/json")
+        return HttpResponse(data, content_type="application/json")      #возвращает json
 
 
+#ф-ия получения информации о пользователе
 class UserInfo(APIView):
     def get(self, request):
         name = request.user
         info = User.objects.filter(username=name)
         data = serialize("json", info, indent=2)
-        return HttpResponse(data, content_type="application/json")
+        return HttpResponse(data, content_type="application/json")      #возвращает json
 
 
+#ф-ия добавления статуса пользователя в бд
+@csrf_exempt
+def setStatus(request):
+    if request.method == 'POST':
+        f = AddComment(request.POST)
+        if f.is_valid():
+            username = f.data['username']
+            status = f.data['is_Owner']
+            item = Owners(username=username, is_Owner=status)
+            item.save()
+        else:
+            print(f.errors)
+
+    return HttpResponse(request)      #возвращает ответ
+
+
+#ф-ия получения статуса пользователя
+class UserStatus(APIView):
+    def get(self, request):
+        name = request.user
+        info = Owners.objects.filter(username=name)
+        data = serialize("json", info, indent=2)
+        print(data)
+        return HttpResponse(data, content_type="application/json")      #возвращает json
+
+#
+#
+# @csrf_exempt
+# def RatingSys(request):
+#     if request.method == 'POST':
+#         f = AddComment(request.POST)
+#         if f.is_valid():
+#             username = f.data['username']
+#             status = f.data['is_Owner']
+#             item = Owners(username=username, is_Owner=status)
+#             item.save()
+#         else:
+#             print(f.errors)
+#
+#     return HttpResponse(request)
+
+
+#ф-ия получения рейтинга кофейни
+class getRating(APIView):
+    def get(self, request, pk):
+        rates = CoffeeShop.objects.filter(id=pk)
+        data = serialize("json", rates, indent=2)
+        return HttpResponse(data, content_type="application/json")      #возвращает json
+
+
+#ф-ия добавления рейтинга в бд
+@csrf_exempt
+def setRating(request):
+    if request.method == 'POST':
+        f = AddComment(request.POST)
+        if f.is_valid():
+            pk = f.data['coffee_shop_id']
+            shop = list(CoffeeShop.objects.filter(id=pk).values())
+            number = shop[0]['numRates']
+            rating = shop[0]['rating']
+            total_rate = number * rating
+            new_total_rate = total_rate + int(f.data['rate'])
+            new_number = number + 1
+            new_total_rate /= new_number
+            CoffeeShop.objects.filter(id=pk).update(numRates=new_number)
+            CoffeeShop.objects.filter(id=pk).update(rating=new_total_rate)
+        else:
+            print(f.errors)
+
+    return HttpResponse(request)      #возвращает ответ
+
+
+#
+def rating_list(request):
+    coffeelist = CoffeeShop.objects.order_by('-rating')
+    data = serialize("json", coffeelist, indent=2)
+    return HttpResponse(data, content_type="application/json")      #возвращает json
