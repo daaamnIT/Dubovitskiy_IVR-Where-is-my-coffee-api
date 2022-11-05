@@ -1,6 +1,6 @@
 from django.urls import re_path, path
 from rest_framework.authtoken.views import obtain_auth_token
-from .views import CreateUserAPIView, LogoutUserAPIView, CommentsView, UserInfo, UserStatus, getRating, AddInfo
+from .views import CreateUserAPIView, LogoutUserAPIView, CommentsView, UserInfo, UserStatus, getRating, AddInfo, getFavourite
 
 
 #ссылки использующие DRF Token для авторизации пользователя
@@ -30,8 +30,8 @@ urlpatterns = [
          getRating.as_view(),
          name='getRating',
          ),
-    # path('infoadd/',
-    #      AddInfo.as_view(),
-    #      name="InfoAdding"
-    #      ),
+    path('get_favourite/',
+         getFavourite.as_view(),
+         name="GetFavourite"
+         ),
 ]

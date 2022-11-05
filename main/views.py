@@ -10,6 +10,7 @@ from .forms import AddComment
 from .forms import Reports
 from .forms import OwnerAdd
 from .forms import InfoAdd
+from .forms import AddToFavourite
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.generics import CreateAPIView
 from rest_framework.permissions import AllowAny
@@ -20,6 +21,8 @@ from rest_framework.views import APIView
 from rest_framework.decorators import api_view
 from .serializers import CreateUserSerializer
 from django.contrib.auth.models import User
+import json
+
 
 
 #вью функция страницы входа (не используется)
@@ -324,3 +327,38 @@ def info_list(request, pk):
     infolist = Info.objects.filter(shop_id=pk)
     data = serialize("json", infolist, indent=2)
     return HttpResponse(data, content_type="application/json")      #возвращает json
+
+
+@csrf_exempt
+def addtofavourite(request):
+    if request.method == 'POST':
+        f = AddToFavourite(request.POST)
+        if f.is_valid():
+            shop_id = f.data['shop_id']
+            username = f.data['username']
+            shop_name = f.data['shop_name']
+
+            v = Favourite.objects.filter(username=username).values_list('shop_name', flat=True)
+            if Favourite.objects.filter(username=username).count() == 0:
+                item = Favourite(shop_id=shop_id, username=username, shop_name=shop_name)
+                item.save()
+            elif shop_name in v:
+                pass
+            else:
+                item = Favourite(shop_id=shop_id, username=username, shop_name=shop_name)
+                item.save()
+
+        return HttpResponse(request)  # возвращает ответ (ок/не ок)
+
+
+
+# ф-ия получения статуса пользователя
+class getFavourite(APIView):
+    def get(self, request):
+        username = request.user
+        print(username)
+        info = Favourite.objects.filter(username=username)
+        data = serialize("json", info, indent=2)
+        # values = json.load(data)
+
+        return HttpResponse(data, content_type="application/json")  # возвращает json

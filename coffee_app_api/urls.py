@@ -38,4 +38,5 @@ urlpatterns = [
     path('rate_list/', views.rating_list, name='rating_list'),
     path('info_list/<int:pk>/', views.info_list, name='info_list'),
     path('add_info/', views.AddInfo, name='info_add'),
+    path('add_to_favourite/', views.addtofavourite, name='AddToFavourite')
 ]
