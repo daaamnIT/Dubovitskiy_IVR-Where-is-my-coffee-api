@@ -35,3 +35,9 @@ class Owners(models.Model):
 class Info(models.Model):
     shop_id = models.IntegerField(default=0)
     info = models.CharField(max_length=255, default=None)
+
+
+class Favourite(models.Model):
+    shop_id = models.IntegerField(default=0)
+    username = models.CharField(max_length=255, default=None)
+    shop_name = models.CharField(max_length=255, default=None)
