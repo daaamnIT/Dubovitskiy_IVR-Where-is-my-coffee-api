@@ -38,5 +38,9 @@ urlpatterns = [
     path('rate_list/', views.rating_list, name='rating_list'),
     path('info_list/<int:pk>/', views.info_list, name='info_list'),
     path('add_info/', views.AddInfo, name='info_add'),
-    path('add_to_favourite/', views.addtofavourite, name='AddToFavourite')
+    path('add_to_favourite/', views.addtofavourite, name='AddToFavourite'),
+    path('add_menu/', views.AddToMenu, name='menu_add'),
+    path('get_menu/<int:pk>/', views.get_menu, name='menu_get'),
+    path('makeorder/', views.makepreorder, name='order_make'),
+    path('get_name/<int:pk>/', views.get_owner_name, name='get_owner_name')
 ]

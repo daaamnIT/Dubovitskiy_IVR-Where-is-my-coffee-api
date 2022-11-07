@@ -11,6 +11,8 @@ from .forms import Reports
 from .forms import OwnerAdd
 from .forms import InfoAdd
 from .forms import AddToFavourite
+from .forms import AddMenu
+from .forms import AddOrder
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.generics import CreateAPIView
 from rest_framework.permissions import AllowAny
@@ -93,8 +95,10 @@ def adding(request):
             description = f.data['description']
             latitude = f.data['latitude']
             longitude = f.data['longitude']
+            hasOwner = f.data['hasOwner']
+            ownername = f.data['OwnerName']
 
-            item = CoffeeShop(name=name, description=description, latitude=latitude, longitude=longitude)
+            item = CoffeeShop(name=name, description=description, latitude=latitude, longitude=longitude, hasOwner=hasOwner, OwnerName=ownername)
             item.save()
 
             coffee_list(request)
@@ -362,3 +366,86 @@ class getFavourite(APIView):
         # values = json.load(data)
 
         return HttpResponse(data, content_type="application/json")  # возвращает json
+
+
+@csrf_exempt
+def AddToMenu(request):
+    if request.method == 'POST':
+        f = AddMenu(request.POST)
+        if f.is_valid():
+            print(request.POST)
+            a = []
+            for i in range(len(request.POST) - 1):
+                print(f.data['position_' + str(i)])
+                a.append(f.data['position_' + str(i)])
+            print(a)
+            res = []
+            print(Menu.objects.filter(owner_name=f.data['owner_name']).count())
+            if Menu.objects.filter(owner_name=f.data['owner_name']).count() == 0:
+                for i in range(len(a)):
+                    owner_name = f.data['owner_name']
+                    position = a[i]
+                    item = Menu(owner_name=owner_name, position=position)
+                    item.save()
+            else:
+                values = list(Menu.objects.filter(owner_name=f.data['owner_name']).values_list('position', flat=True))
+                print(values)
+                for i in range(len(a)):
+                    if a[i] not in values:
+                        res.append(a[i])
+            if len(res) == 0:
+                print('nothing')
+            else:
+                print('opa')
+                for i in range(len(res)):
+                    owner_name = f.data['owner_name']
+                    position = res[i]
+                    item = Menu(owner_name=owner_name, position=position)
+                    item.save()
+
+        return HttpResponse(request)  # возвращает ответ (ок/не ок)
+
+
+def get_menu(request, pk):
+    name = list(CoffeeShop.objects.filter(pk=pk).values_list('OwnerName', flat=True))[0]
+    pos = Menu.objects.filter(owner_name=name)
+    data = serialize("json", pos, indent=1)
+    print(data)
+    # comments = Comment.objects.filter(coffee_shop=pk)
+    # data = serialize("json", comments, indent=2)
+    return HttpResponse(data, content_type="application/json")
+
+
+@csrf_exempt
+def makepreorder(request):
+    if request.method == 'POST':
+        f = AddOrder(request.POST)
+        if f.is_valid():
+            position = f.data['position']
+            time = f.data['time']
+            username = f.data['username']
+            owner_name = f.data['owner_name']
+            item = Preorder(position=position, time=time, username=username, owner_name=owner_name)
+            item.save()
+
+        return HttpResponse(request)  # возвращает ответ (ок/не ок)
+
+
+def get_owner_name(request, pk):
+    name = CoffeeShop.objects.filter(pk=pk)
+    # pos = Menu.objects.filter(owner_name=name)
+    data = serialize("json", name, indent=1)
+    print(data)
+    # comments = Cp.objects.(pk=pk)
+    # data = serialize("json", comments, indent=2)
+    return HttpResponse(data, content_type="application/json")
+
+
+#ф-ия получения статуса пользователя
+class getOrders(APIView):
+    def get(self, request):
+        name = request.user
+        orders = Preorder.objects.filter(owner_name=name)
+        data = serialize("json", orders, indent=2)
+        print(data)
+        return HttpResponse(data, content_type="application/json")      #возвращает json
