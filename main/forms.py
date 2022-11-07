@@ -2,14 +2,14 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 
-from main.models import CoffeeShop, Comment, Reports, Owners, Info, Favourite
+from main.models import CoffeeShop, Comment, Reports, Owners, Info, Favourite, Menu, Preorder
 
 
 #Форма информации о кофейне
 class AddForm(forms.Form):
     class Meta:
         model = CoffeeShop
-        fields = ['name', 'description', 'latitude', 'longitude']
+        fields = ['name', 'description', 'latitude', 'longitude', 'hasOwner', 'OwnerName']
 
 
 #Форма информации о комментариях
@@ -50,3 +50,15 @@ class AddToFavourite(forms.Form):
     class Meta:
         model = Favourite
         fields = ['shop_id', 'username', 'shop_name']
+
+
+class AddMenu(forms.Form):
+    class Meta:
+        model = Menu
+        fields = ['owner_name', 'position']
+
+
+class AddOrder(forms.Form):
+    class Meta:
+        model = Preorder
+        fields = ['position', 'time', 'username', 'owner_name']

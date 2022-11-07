@@ -11,7 +11,8 @@ class CoffeeShop(models.Model):
     image = models.ImageField(upload_to="coffee", null=True)
     rating = models.FloatField(default=0)
     numRates = models.IntegerField(default=0)
-
+    hasOwner = models.CharField(max_length=255, default="False")
+    OwnerName = models.CharField(max_length=255, default='no')
 
 #Модель комментариев
 class Comment(models.Model):
@@ -41,3 +42,15 @@ class Favourite(models.Model):
     shop_id = models.IntegerField(default=0)
     username = models.CharField(max_length=255, default=None)
     shop_name = models.CharField(max_length=255, default=None)
+
+
+class Menu(models.Model):
+    owner_name = models.CharField(max_length=255, default=None)
+    position = models.CharField(max_length=255, default=None)
+
+
+class Preorder(models.Model):
+    position = models.CharField(max_length=255, default=None)
+    time = models.CharField(max_length=255, default=None)
+    username = models.CharField(max_length=255, default=None)
+    owner_name = models.CharField(max_length=255, default=None)
